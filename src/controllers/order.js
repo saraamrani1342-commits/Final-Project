@@ -1,4 +1,4 @@
-import  orderSchema from '../models/order';
+import  orderSchema from '../models/order.js';
 
 //Get all orders from the database - מנהל בלבד
 export const getAllOrders = async (req, res) => { 
