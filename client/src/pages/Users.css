@@ -1,0 +1,36 @@
+.users {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.users h1 {
+  color: #282c34;
+  margin-bottom: 2rem;
+}
+
+.users-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.user-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: white;
+}
+
+.user-card h3 {
+  color: #282c34;
+  margin-bottom: 0.5rem;
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: red;
+}
+
