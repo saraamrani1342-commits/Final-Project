@@ -248,9 +248,9 @@ const GEMINI_USER_PROMPT =
   'If no clear face is visible, still return valid JSON with the same keys and explain in Hebrew in "reasoning".';
 
 const GEMINI_DEFAULT_MODELS = [
-  'gemini-2.5-flash',
   'gemini-2.0-flash-lite',
-  'gemini-2.0-flash',
+   'gemini-2.0-flash',
+   'gemini-2.5-flash',
 ];
 
 function isGeminiModelNotFoundError(err) {
