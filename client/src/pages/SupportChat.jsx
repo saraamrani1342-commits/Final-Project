@@ -15,32 +15,61 @@ export default function SupportChat() {
 
   useLayoutEffect(() => {
     const hash = location.hash || '';
-    const hashId = hash.replace('#', '');
-    const stateId = location.state?.scrollToId;
-    const id = stateId || hashId;
-    if (!id) return;
+    if (!hash) return;
+    const id = hash.replace('#', '');
     if (id === 'top') {
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      return;
+    }
+
+    if (id === 'contact-us') {
+      const trackEl = contactStackRef.current;
+      if (trackEl) {
+        const viewportH = window.innerHeight || 1;
+        const trackTop = trackEl.getBoundingClientRect().top + window.scrollY;
+        const maxScrollable = Math.max(0, trackEl.offsetHeight - viewportH);
+        const y = trackTop + maxScrollable;
+
+        const root = document.documentElement;
+        const prev = root.style.scrollBehavior;
+        root.style.scrollBehavior = 'auto';
+        window.scrollTo({ top: y, left: 0, behavior: 'auto' });
+        root.style.scrollBehavior = prev;
+
+        const panel = trackEl.querySelector('.contact-stack-panel');
+        if (panel && window.innerWidth > 900) {
+          panel.style.transform = 'translateY(0%)';
+          panel.style.opacity = '1';
+        }
+      }
       return;
     }
 
     let cancelled = false;
     let tries = 0;
 
-    const scrollToEl = (targetEl, offset = 90, behavior = 'smooth') => {
-      const topOffset = offset;
+    const instantScrollToEl = (targetEl) => {
+      const topOffset = 90;
       const y = targetEl.getBoundingClientRect().top + window.scrollY - topOffset;
-      window.scrollTo({ top: Math.max(0, y), behavior });
+
+      const root = document.documentElement;
+      const prev = root.style.scrollBehavior;
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo({ top: Math.max(0, y), left: 0, behavior: 'auto' });
+      root.style.scrollBehavior = prev;
+    };
+
+    const smoothScrollToEl = (targetEl) => {
+      const topOffset = 90;
+      const y = targetEl.getBoundingClientRect().top + window.scrollY - topOffset;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
     };
 
     const tick = () => {
       if (cancelled) return;
       const el = document.getElementById(id);
       if (el) {
-        // גלילה אחת חלקה וללא "קפיצה כפולה".
-        // offset קטן יותר ל-contact-us כדי שהטופס יישב קצת יותר למעלה במסך.
-        const offset = id === 'contact-us' ? 56 : 90;
-        scrollToEl(el, offset, 'smooth');
+        smoothScrollToEl(el);
         return;
       }
       tries += 1;
@@ -51,14 +80,52 @@ export default function SupportChat() {
     return () => {
       cancelled = true;
     };
-  }, [location.pathname, location.hash, location.key]);
+  }, [location.pathname, location.hash]);
 
   useEffect(() => {
-    // בוטל אפקט ה-stack: הטופס נשאר סטטי על התמונה, ללא גלילה פנימית/סייד-בר.
-    const panel = contactStackRef.current?.querySelector('.contact-stack-panel');
-    if (!panel) return;
-    panel.style.transform = 'translateY(0%)';
-    panel.style.opacity = '1';
+    const trackEl = contactStackRef.current;
+    if (!trackEl) return undefined;
+
+    const panel = trackEl.querySelector('.contact-stack-panel');
+    if (!panel) return undefined;
+
+    let rafId = null;
+
+    const updateStack = () => {
+      if (window.innerWidth <= 900) {
+        panel.style.transform = 'translateY(0%)';
+        panel.style.opacity = '1';
+        return;
+      }
+
+      const rect = trackEl.getBoundingClientRect();
+      const viewportH = window.innerHeight;
+      const maxScrollable = Math.max(1, rect.height - viewportH);
+      const currentScroll = Math.min(Math.max(-rect.top, 0), maxScrollable);
+      const progress = currentScroll / maxScrollable;
+      const t = Math.max(0, Math.min(1, progress));
+      const translateY = (1 - t) * 100;
+      panel.style.transform = `translateY(${translateY}%)`;
+      panel.style.opacity = `${0.82 + t * 0.18}`;
+    };
+
+    const onViewportUpdate = () => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(() => {
+        updateStack();
+        rafId = null;
+      });
+    };
+
+    window.addEventListener('scroll', onViewportUpdate, { passive: true });
+    window.addEventListener('resize', onViewportUpdate);
+    updateStack();
+
+    return () => {
+      window.removeEventListener('scroll', onViewportUpdate);
+      window.removeEventListener('resize', onViewportUpdate);
+      if (rafId) window.cancelAnimationFrame(rafId);
+    };
   }, []);
 
   const submitContact = async () => {
