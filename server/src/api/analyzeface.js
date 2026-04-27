@@ -250,7 +250,7 @@ const GEMINI_USER_PROMPT =
 const GEMINI_DEFAULT_MODELS = [
   'gemini-2.0-flash-lite',
    'gemini-2.0-flash',
-   'gemini-2.5-flash',
+  
 ];
 
 function isGeminiModelNotFoundError(err) {
