@@ -594,11 +594,11 @@ export default async function analyzeFace(req, res) {
     const geminiKey = resolveGeminiKey();
     const openaiKey = resolveOpenAIKey();
     const anthropicKey =
-      typeof process.env.ANTHROPIC_API_KEY === 'string'
-        ? process.env.ANTHROPIC_API_KEY.trim()
+      typeof process.env.OPENAI_API_KEY === 'string'
+        ? process.env.OPENAI_API_KEY.trim()
         : '';
     // Only treat as a valid Anthropic key if it matches Anthropic format.
-    // This prevents misconfiguration where an OpenAI key is placed in ANTHROPIC_API_KEY
+    // This prevents misconfiguration where an OpenAI key is placed in OPENAI_API_KEY
     // which would cause "invalid x-api-key" and block the flow.
     const anthropicReal = anthropicKey && anthropicKey.startsWith('sk-ant-') ? anthropicKey : '';
 

@@ -68,7 +68,7 @@ function humanizeAnalyzeError(err) {
     return `${base}\n\n(מגבלת Gemini/Google — לא קשור לסימולציית האיפור בדפדפן.)`;
   }
 
-  if (serverMsg === 'Missing ANTHROPIC_API_KEY on server.') {
+  if (serverMsg === 'Missing _API_KEY on server.') {
     return 'נדרש מפתח API בשרת.';
   }
   if (serverMsg === 'Face analysis failed.' || serverMsg === 'Claude returned an unparsable response.') {

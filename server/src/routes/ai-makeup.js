@@ -33,15 +33,15 @@ function parseJsonLoose(text) {
 
 router.post('/analyze-face', async (req, res) => {
   try {
-    const apiKey = String(process.env.ANTHROPIC_API_KEY || '').trim();
+    const apiKey = String(process.env.OPENAI_API_KEY || '').trim();
     if (!apiKey) {
-      return res.status(400).json({ error: 'Missing ANTHROPIC_API_KEY on server.' });
+      return res.status(400).json({ error: 'Missing OPENAI_API_KEY on server.' });
     }
     if (apiKey.startsWith('sk-proj-') || apiKey.startsWith('sk-')) {
-      // Common misconfiguration: OpenAI key placed in ANTHROPIC_API_KEY
+      // Common misconfiguration: OpenAI key placed in OPENAI_API_KEY
       if (!apiKey.startsWith('sk-ant-')) {
         return res.status(400).json({
-          error: 'Invalid ANTHROPIC_API_KEY',
+          error: 'Invalid OPENAI_API_KEY',
           details: 'נראה שהוזן מפתח שאינו של Anthropic. אנא הכניסי מפתח שמתחיל ב־sk-ant- (Claude).',
         });
       }
@@ -116,14 +116,14 @@ Coordinates are relative (0=left/top, 1=right/bottom). Return ONLY JSON, no text
 
 router.post('/recommend-looks', async (req, res) => {
   try {
-    const apiKey = String(process.env.ANTHROPIC_API_KEY || '').trim();
+    const apiKey = String(process.env.OPENAI_API_KEY || '').trim();
     if (!apiKey) {
-      return res.status(400).json({ error: 'Missing ANTHROPIC_API_KEY on server.' });
+      return res.status(400).json({ error: 'Missing OPENAI_API_KEY on server.' });
     }
     if (apiKey.startsWith('sk-proj-') || apiKey.startsWith('sk-')) {
       if (!apiKey.startsWith('sk-ant-')) {
         return res.status(400).json({
-          error: 'Invalid ANTHROPIC_API_KEY',
+          error: 'Invalid OPENAI_API_KEY',
           details: 'נראה שהוזן מפתח שאינו של Anthropic. אנא הכניסי מפתח שמתחיל ב־sk-ant- (Claude).',
         });
       }
