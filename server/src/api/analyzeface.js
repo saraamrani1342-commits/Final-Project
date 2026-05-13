@@ -610,7 +610,7 @@ export default async function analyzeFace(req, res) {
     }
 
     /** סדר: OpenAI ראשון (ברירת מחדל כשיש מפתח) → Gemini → Anthropic; או Gemini קודם עם PREFER_GEMINI_FIRST=1 */
-    const openaiFirst = shouldTryOpenAIFirst(openaiKey);
+   const openaiFirst = false;
     const steps = [];
     if (openaiFirst && openaiKey) {
       steps.push(['openai', () => analyzeWithOpenAI(openaiKey, cleaned, media_type)]);
